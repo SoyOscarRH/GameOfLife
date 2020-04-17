@@ -9,3 +9,6 @@ wasm-pack.log
 # Web
 node_modules
 dist
+
+# misc
+.DS_Store
