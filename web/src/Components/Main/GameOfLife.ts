@@ -51,12 +51,21 @@ class GameofLife {
     return this.cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
   }
 
-  render = this.renderLoop.bind(this);
-  renderLoop() {
-    this.universe.tick();
-    this.drawCells();
-    requestAnimationFrame(this.render);
+  renderLoop(): [() => void, () => void] {
+    let id: null | number = null;
+    const render = () => {
+      this.universe.tick();
+      this.drawCells();
+      id = requestAnimationFrame(render);
+    };
+
+    const toggle = () => {
+      if (!id) return render();
+      cancelAnimationFrame(id);
+      id = null;
+    };
+    return [render, toggle];
   }
 }
 
-export default GameofLife
+export default GameofLife;
