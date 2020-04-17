@@ -1,0 +1,24 @@
+{
+  "name": "game-of-life-soyoscarrh",
+  "version": "0.1.0",
+  "main": "index.js",
+  "homepage": "https://github.com/rustwasm/create-wasm-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rustwasm/create-wasm-app.git"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack-dev-server"
+  },
+  "keywords": [ "webassembly", "wasm", "rust", "webpack"],
+  "author": "SoyOscarRH <soyoscarrh@gmail.com>",
+  "devDependencies": {
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  },
+  "dependencies": {
+    "game-of-life-algorithm": "file:../game-of-life-algorithm/pkg"
+  }
+}
