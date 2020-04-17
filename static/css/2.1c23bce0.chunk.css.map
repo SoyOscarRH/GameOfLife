@@ -1,1 +1,0 @@
-{"version":3,"sources":["main.module.css"],"names":[],"mappings":"AAAA,8BACE,eAAgB,CAChB,UAAW,CACX,aAAc,CACd,mBACF","file":"2.1c23bce0.chunk.css","sourcesContent":[".displayContainer {\n  overflow: scroll;\n  width: 85vw;\n  margin: 0 auto;\n  border-radius: 0.5rem;\n}\n"]}
