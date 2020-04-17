@@ -1,0 +1,22 @@
+[package]
+name = "game-of-life-algorithm"
+version = "0.1.0"
+authors = ["SoyOscarRH <soyoscarrh@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+
+[dependencies]
+wasm-bindgen = "0.2"
+wee_alloc = { version = "0.4.2", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.2"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
