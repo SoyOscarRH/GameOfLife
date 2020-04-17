@@ -1,6 +1,7 @@
 .displayContainer {
   overflow: scroll;
   width: 85vw;
+  height: 82vh;
   margin: 0 auto;
   border-radius: 0.5rem;
 }
