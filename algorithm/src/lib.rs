@@ -12,6 +12,15 @@ pub enum Cell {
     Alive = 1,
 }
 
+impl Cell {
+    fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Dead => Cell::Alive,
+            Cell::Alive => Cell::Dead,
+        };
+    }
+}
+
 #[wasm_bindgen]
 pub struct Universe {
     width: usize,
@@ -40,6 +49,10 @@ impl Universe {
         }
 
         return count - self.at(row, col) as u8;
+    }
+
+    pub fn toggle_cell(&mut self, row: usize, column: usize) {
+        self.cells[row * self.width + column].toggle();
     }
 
     pub fn cells(&self) -> *const Cell {
