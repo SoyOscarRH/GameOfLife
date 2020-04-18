@@ -7,7 +7,7 @@
 }
 
 .icon {
-  height: 1rem;
+  height: 1.2rem;
   margin: 0 0.6rem;
   cursor: pointer;
   transition: opacity 0.6s;
@@ -74,6 +74,11 @@
 
 .editing button, .editing input[type=file] {
   grid-column: span 2;
+}
+
+
+.editing input[type=file] {
+  font-size: 0.7rem;
 }
 
 @media only screen and (max-width: 600px) {

@@ -13,34 +13,14 @@ let cells = new Uint8Array();
 let id = 0;
 
 let universe: Universe;
-type context = CanvasRenderingContext2D;
-let context: context;
+let context: CanvasRenderingContext2D;
+let canvas: HTMLCanvasElement;
 
-const create = (data: { width: number; height: number; density?: number; cell_size?: number }) => {
-  if (data.cell_size != null) {
-    cell_size = data.cell_size;
-    cell_space = cell_size + 1;
-  }
-
-  width = data.width;
-  height = data.height;
-
-  universe = data.density != null ? Universe.create(width, height, data.density) : Universe.default_start(width, height);
-};
-
-const paintPoint = (context: context, row: number, col: number) => {
-  context.fillStyle = getColor(row, col);
-  const x = col * cell_space + 1;
-  const y = row * cell_space + 1;
-  context.fillRect(x, y, cell_size, cell_size);
-};
-
-const isRunning = () => id !== 0;
-const attach = (canvas: HTMLCanvasElement) => {
+const setUpCanvas = () => {
   canvas.height = cell_space * height + 1;
   canvas.width = cell_space * width + 1;
 
-  context = canvas.getContext("2d") as context;
+  context = canvas.getContext("2d") as CanvasRenderingContext2D;
   drawCells();
 
   canvas.addEventListener("click", event => {
@@ -61,6 +41,27 @@ const attach = (canvas: HTMLCanvasElement) => {
   });
 };
 
+const create = (data: { width: number; height: number; density?: number; cell_size?: number; canvas?: HTMLCanvasElement }) => {
+  canvas = data.canvas ?? canvas;
+  cell_size = data.cell_size ?? cell_size;
+  cell_space = cell_size + 1;
+
+  width = data.width;
+  height = data.height;
+
+  universe = data.density != null ? Universe.create(width, height, data.density) : Universe.default_start(width, height);
+  setUpCanvas();
+};
+
+const paintPoint = (context: CanvasRenderingContext2D, row: number, col: number) => {
+  context.fillStyle = getColor(row, col);
+  const x = col * cell_space + 1;
+  const y = row * cell_space + 1;
+  context.fillRect(x, y, cell_size, cell_size);
+};
+
+const isRunning = () => id !== 0;
+
 const drawCells = () => {
   const cellsPointer = universe.cells();
   const size = width * height;
@@ -77,10 +78,23 @@ const drawCells = () => {
   context.stroke();
 };
 
-const getColor = (row: number, column: number) => {
+const get = (row: number, column: number) => {
   const index = width * row + column;
-  return cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+  return cells[index];
 };
+
+const getInfo = () => {
+  const data = []
+
+  for (let i = 0; i < height; ++i) {
+    for (let j = 0; j < width; ++j) data.push(get(i, j) === Cell.Dead? 0 : 1);
+    data.push("\n");
+  }
+
+  return data.join("");
+};
+
+const getColor = (row: number, column: number) => (get(row, column) === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR);
 
 const toggle = () => {
   if (!isRunning()) return render();
@@ -101,17 +115,17 @@ const render = () => {
 
 const setColor = (color: string) => (ALIVE_COLOR = color);
 const setColorBack = (color: string) => (DEAD_COLOR = color);
-const setSize = (size: number, canvas: HTMLCanvasElement) => {
-  cell_size = size;
+
+const setSize = (event: React.ChangeEvent<HTMLInputElement>) => {
+  cell_size = parseInt(event.target.value);
   cell_space = cell_size + 1;
-  attach(canvas);
+  setUpCanvas();
 };
 
 const set = (row: number, cols: number, val: 0 | 1) => universe.set(row, cols, val ? Cell.Alive : Cell.Dead);
 
 export {
   create,
-  attach,
   drawCells,
   set,
   render,
@@ -121,6 +135,8 @@ export {
   setColor,
   setColorBack,
   setSize,
+  setUpCanvas,
+  getInfo,
   ALIVE_COLOR,
   DEAD_COLOR,
 };
