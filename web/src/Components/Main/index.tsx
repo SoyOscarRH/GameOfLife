@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 import { useToggle } from "../../Hooks/useToggle";
 
@@ -11,7 +11,6 @@ import { getDefaultValues, getInit, save as saveFile } from "./utils";
 import edit from "../../assets/edit.png";
 import pause from "../../assets/pause.png";
 import save from "../../assets/save.png";
-
 
 const { width, height, size, density } = getDefaultValues();
 
@@ -30,13 +29,19 @@ const Main = () => {
   const heightInput = useRef<HTMLInputElement>(null);
   const densityInput = useRef<HTMLInputElement>(null);
 
+  const [densityChange, setDensityChange] = useState(false);
+  const changeDensity = useCallback(() => setDensityChange(true), []);
+
   const startSimulation = () => {
     const width = parseInt(widthInput.current?.value!);
     const height = parseInt(heightInput.current?.value!);
     const density = parseFloat(densityInput.current?.value!);
 
     GameOfLife.stop();
-    if (density !== -1) GameOfLife.create({ width, height, density });
+    if (densityChange) {
+      setDensityChange(false);
+      GameOfLife.create({ width, height, density });
+    }
     GameOfLife.drawCells();
     setTimeout(() => GameOfLife.render(), 1000);
     toggleEditing();
@@ -62,13 +67,13 @@ const Main = () => {
         <input type="number" id="nCells" min="1" max="10" defaultValue={size} onChange={e => GameOfLife.setSize(e)} />
 
         <label htmlFor="width">Width: </label>
-        <input type="number" defaultValue={width} id="width" step="20" min="20" max="1000" ref={widthInput} />
+        <input type="number" defaultValue={width} id="width" step="20" min="20" max="1000" ref={widthInput} onChange={changeDensity} />
 
         <label htmlFor="height">Height: </label>
-        <input type="number" defaultValue={height} id="height" step="20" min="20" max="1000" ref={heightInput} />
+        <input type="number" defaultValue={height} id="height" step="20" min="20" max="1000" ref={heightInput} onChange={changeDensity} />
 
         <label htmlFor="density">Density: </label>
-        <input type="number" defaultValue={density} id="density" step="0.1" min="0" max="1" ref={densityInput} />
+        <input type="number" defaultValue={density} id="density" step="0.1" min="0" max="1" ref={densityInput} onChange={changeDensity} />
 
         <input type="file" id="file" onChange={e => getInit(e, widthInput, heightInput, densityInput)} />
 
