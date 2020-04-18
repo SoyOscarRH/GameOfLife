@@ -8,7 +8,7 @@ const getDefaultValues = () => {
   const size = isMobile ? 5 : 4;
   const density = 0.3;
 
-  return { width : 30, height : 35, size: 8, density };
+  return { width, height, size, density };
 };
 
 type eventInput = ChangeEvent<HTMLInputElement>;
@@ -43,4 +43,12 @@ const getInit = (e: eventInput, widthInput: input, heightInput: input, densityIn
   };
 };
 
-export { getDefaultValues, getInit };
+
+const save = (filename: string, text: string) => {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.click()
+}
+
+export { getDefaultValues, getInit, save };

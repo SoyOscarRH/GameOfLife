@@ -6,14 +6,12 @@ import * as GameOfLife from "./GameOfLife";
 
 import mainStyle from "./main.module.css";
 
-import { getDefaultValues, getInit } from "./utils";
+import { getDefaultValues, getInit, save as saveFile } from "./utils";
 
 import edit from "../../assets/edit.png";
 import pause from "../../assets/pause.png";
 import save from "../../assets/save.png";
 
-// @ts-ignore
-window.game = { ...GameOfLife };
 
 const { width, height, size, density } = getDefaultValues();
 
@@ -48,7 +46,7 @@ const Main = () => {
     <>
       <div className={mainStyle.header}>
         <h2>Game of Life</h2>
-        <img alt="save" className={mainStyle.icon} src={save} onClick={() => console.log(GameOfLife.getInfo())} />
+        <img alt="save" className={mainStyle.icon} src={save} onClick={() => saveFile("data.txt", GameOfLife.getInfo())} />
         <img alt="pause" className={mainStyle.icon} src={pause} onClick={togglePause} style={{ opacity: isPaused ? 0.5 : 1 }} />
         <img alt="edit" className={mainStyle.icon} src={edit} onClick={toggleEditing} style={{ opacity: isEditing ? 1 : 0.5 }} />
       </div>
