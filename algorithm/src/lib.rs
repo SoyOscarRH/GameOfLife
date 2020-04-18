@@ -30,6 +30,11 @@ pub struct Universe {
     width: usize,
     height: usize,
     cells: Vec<Cell>,
+    survive_min: u8,
+    survive_max: u8,
+    birth_min: u8,
+    birth_max: u8,
+    alive_now: usize,
 }
 
 #[wasm_bindgen]
@@ -40,6 +45,10 @@ impl Universe {
 
     pub fn at(&self, row: usize, col: usize) -> Cell {
         self.cells[self.index(row, col)]
+    }
+
+    pub fn alive_now(&self) -> usize {
+        self.alive_now
     }
 
     pub fn set(&mut self, row: usize, col: usize, value: Cell) {
@@ -60,7 +69,6 @@ impl Universe {
         return count - self.at(row, col) as u8;
     }
 
-
     pub fn toggle_cell(&mut self, row: usize, column: usize) {
         let index = self.index(row, column);
         self.cells[index].toggle();
@@ -72,30 +80,33 @@ impl Universe {
 
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
+        let mut current = 0;
 
         for row in 0..self.height {
             for col in 0..self.width {
                 let cell = self.at(row, col);
                 let live_neighbors = self.count_alive_around(row, col);
+
                 let next_cell = match (cell, live_neighbors) {
-                    (Cell::Alive, 0) | (Cell::Alive, 1) => Cell::Dead,
-                    (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
+                    (Cell::Alive, n) if self.survive_min <= n && self.survive_max >= n => Cell::Alive,
+                    (Cell::Dead, n) if self.birth_min <= n && self.birth_max >= n => Cell::Alive,
                     (Cell::Alive, _) => Cell::Dead,
-                    (Cell::Dead, 3) => Cell::Alive,
                     (Cell::Dead, _) => Cell::Dead,
                 };
+                if next_cell == Cell::Alive { current += 1; }
 
                 next[self.index(row, col)] = next_cell;
             }
         }
 
+        self.alive_now = current;
         self.cells = next;
     }
 
-    pub fn create(width: usize, height: usize, density: f64) -> Universe {
+    pub fn create(width: usize, height: usize, density: f64, smin: u8, smax: u8, bmin: u8, bmax: u8) -> Universe {
         panic::set_hook(Box::new(console_error_panic_hook::hook));
         let mut rng = rand::thread_rng();
-        let cells = (0..width * height)
+        let cells: Vec<Cell> = (0..width * height)
             .map(|_| {
                 let val: f64 = rng.gen();
                 if val < density {
@@ -106,16 +117,23 @@ impl Universe {
             })
             .collect();
 
+        let alive_now = cells.iter().filter(|&c| *c == Cell::Alive).count();
+
         Universe {
             width,
             height,
             cells,
+            survive_min: smin,
+            survive_max: smax,
+            birth_min: bmin,
+            birth_max: bmax,
+            alive_now
         }
     }
 
-    pub fn default_start(width: usize, height: usize) -> Universe {
+    pub fn default_start(width: usize, height: usize, smin: u8, smax: u8, bmin: u8, bmax: u8) -> Universe {
         panic::set_hook(Box::new(console_error_panic_hook::hook));
-        let cells = (0..width * height)
+        let cells: Vec<Cell> = (0..width * height)
             .map(|i| {
                 if i % 2 == 0 || i % 7 == 0 {
                     Cell::Alive
@@ -125,10 +143,17 @@ impl Universe {
             })
             .collect();
 
+        let alive_now = cells.iter().filter(|&c| *c == Cell::Alive).count();
+
         Universe {
             width,
             height,
             cells,
+            survive_min: smin,
+            survive_max: smax,
+            birth_min: bmin,
+            birth_max: bmax,
+            alive_now
         }
     }
 }

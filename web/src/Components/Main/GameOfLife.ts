@@ -16,6 +16,7 @@ let universe: Universe;
 let context: CanvasRenderingContext2D;
 let canvas: HTMLCanvasElement;
 
+
 const setUpCanvas = () => {
   canvas.height = cell_space * height + 1;
   canvas.width = cell_space * width + 1;
@@ -41,15 +42,16 @@ const setUpCanvas = () => {
   });
 };
 
-const create = (data: { width: number; height: number; density?: number; cell_size?: number; canvas?: HTMLCanvasElement }) => {
+type rules = [number, number, number, number];
+const create = (data: { width: number; height: number; density?: number; cell_size?: number; canvas?: HTMLCanvasElement; rules?: rules }) => {
   canvas = data.canvas ?? canvas;
   cell_size = data.cell_size ?? cell_size;
   cell_space = cell_size + 1;
 
   width = data.width;
   height = data.height;
-
-  universe = data.density != null ? Universe.create(width, height, data.density) : Universe.default_start(width, height);
+  let rules = data.rules ?? [2, 3, 3, 3];
+  universe = data.density != null ? Universe.create(width, height, data.density, ...rules) : Universe.default_start(width, height, ...rules);
   setUpCanvas();
 };
 
@@ -84,10 +86,10 @@ const get = (row: number, column: number) => {
 };
 
 const getInfo = () => {
-  const data = []
+  const data = [];
 
   for (let i = 0; i < height; ++i) {
-    for (let j = 0; j < width; ++j) data.push(get(i, j) === Cell.Dead? 0 : 1);
+    for (let j = 0; j < width; ++j) data.push(get(i, j) === Cell.Dead ? 0 : 1);
     data.push("\n");
   }
 
@@ -109,6 +111,7 @@ const stop = () => {
 
 const render = () => {
   universe.tick();
+  console.log(universe.alive_now())
   drawCells();
   id = requestAnimationFrame(render);
 };
@@ -124,19 +127,4 @@ const setSize = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 const set = (row: number, cols: number, val: 0 | 1) => universe.set(row, cols, val ? Cell.Alive : Cell.Dead);
 
-export {
-  create,
-  drawCells,
-  set,
-  render,
-  toggle,
-  stop,
-  isRunning,
-  setColor,
-  setColorBack,
-  setSize,
-  setUpCanvas,
-  getInfo,
-  ALIVE_COLOR,
-  DEAD_COLOR,
-};
+export { create, drawCells, set, render, toggle, stop, isRunning, setColor, setColorBack, setSize, setUpCanvas, getInfo, ALIVE_COLOR, DEAD_COLOR };
