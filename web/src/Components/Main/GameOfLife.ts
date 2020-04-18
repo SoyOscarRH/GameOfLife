@@ -1,95 +1,126 @@
 import { memory } from "game-of-life-algorithm/game_of_life_algorithm_bg";
 import { Universe, Cell } from "game-of-life-algorithm";
 
-class GameofLife {
-  readonly cell_size: number;
-  readonly cell_space: number;
-  readonly width: number;
-  readonly height: number;
+let DEAD_COLOR = "#393e4a";
+let ALIVE_COLOR = "#989fb0";
 
-  DEAD_COLOR = "#393e4a";
-  ALIVE_COLOR = "#989fb0";
+let cell_size: number;
+let cell_space: number;
+let width: number;
+let height: number;
 
-  cells = new Uint8Array();
-  universe: Universe;
-  context: CanvasRenderingContext2D;
-  id = 0;
+let cells = new Uint8Array();
+let id = 0;
 
-  constructor(cell_size: number, width: number, height: number, canvas: HTMLCanvasElement) {
-    this.width = width;
-    this.height = height;
-    this.cell_size = cell_size;
-    this.cell_space = this.cell_size + 1;
-    this.universe = Universe.create(width, height);
+let universe: Universe;
+type context = CanvasRenderingContext2D;
+let context: context;
 
-    canvas.height = this.cell_space * height + 1;
-    canvas.width = this.cell_space * width + 1;
-
-    this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.drawCells();
-
-    canvas.addEventListener("click", (event) => {
-      if (this.isRunning()) return
-      const boundingRect = canvas.getBoundingClientRect();
-
-      const scaleX = canvas.width / boundingRect.width;
-      const scaleY = canvas.height / boundingRect.height;
-
-      const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
-      const canvasTop = (event.clientY - boundingRect.top) * scaleY;
-
-      const row = Math.min(Math.floor(canvasTop / this.cell_space), height - 1);
-      const col = Math.min(Math.floor(canvasLeft / this.cell_space), width - 1);
-
-      this.universe.toggle_cell(row, col);
-
-      this.drawCells();
-    });
+const create = (data: { width: number; height: number; density?: number; cell_size?: number }) => {
+  if (data.cell_size != null) {
+    cell_size = data.cell_size;
+    cell_space = cell_size + 1;
   }
 
-  drawCells() {
-    const cellsPointer = this.universe.cells();
-    const size = this.width * this.height;
-    this.cells = new Uint8Array(memory.buffer, cellsPointer, size);
+  width = data.width;
+  height = data.height;
 
-    this.context.beginPath();
+  universe = data.density != null ? Universe.create(width, height, data.density) : Universe.default_start(width, height);
+};
 
-    for (let row = 0; row < this.height; row++) {
-      for (let col = 0; col < this.width; col++) {
-        this.context.fillStyle = this.getColor(row, col);
-        const x = col * this.cell_space + 1;
-        const y = row * this.cell_space + 1;
-        this.context.fillRect(x, y, this.cell_size, this.cell_size);
-      }
+const paintPoint = (context: context, row: number, col: number) => {
+  context.fillStyle = getColor(row, col);
+  const x = col * cell_space + 1;
+  const y = row * cell_space + 1;
+  context.fillRect(x, y, cell_size, cell_size);
+};
+
+const isRunning = () => id !== 0;
+const attach = (canvas: HTMLCanvasElement) => {
+  canvas.height = cell_space * height + 1;
+  canvas.width = cell_space * width + 1;
+
+  context = canvas.getContext("2d") as context;
+  drawCells();
+
+  canvas.addEventListener("click", event => {
+    if (isRunning()) return;
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / cell_space), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / cell_space), width - 1);
+
+    universe.toggle_cell(row, col);
+    paintPoint(context, row, col);
+  });
+};
+
+const drawCells = () => {
+  const cellsPointer = universe.cells();
+  const size = width * height;
+  cells = new Uint8Array(memory.buffer, cellsPointer, size);
+
+  context.beginPath();
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      paintPoint(context, row, col);
     }
-
-    this.context.stroke();
   }
 
-  getColor(row: number, column: number) {
-    const { DEAD_COLOR, ALIVE_COLOR } = this;
-    const index = this.width * row + column;
-    return this.cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
-  }
+  context.stroke();
+};
 
-  isRunning() {
-    return !!this.id;
-  }
+const getColor = (row: number, column: number) => {
+  const index = width * row + column;
+  return cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+};
 
-  renderLoop(): [() => void, () => void] {
-    const render = () => {
-      this.universe.tick();
-      this.drawCells();
-      this.id = requestAnimationFrame(render);
-    };
+const toggle = () => {
+  if (!isRunning()) return render();
+  cancelAnimationFrame(id);
+  id = 0;
+};
 
-    const toggle = () => {
-      if (!this.isRunning()) return render();
-      cancelAnimationFrame(this.id);
-      this.id = 0;
-    };
-    return [render, toggle];
-  }
-}
+const stop = () => {
+  cancelAnimationFrame(id);
+  id = 0;
+};
 
-export default GameofLife;
+const render = () => {
+  universe.tick();
+  drawCells();
+  id = requestAnimationFrame(render);
+};
+
+const setColor = (color: string) => (ALIVE_COLOR = color);
+const setColorBack = (color: string) => (DEAD_COLOR = color);
+const setSize = (size: number, canvas: HTMLCanvasElement) => {
+  cell_size = size;
+  cell_space = cell_size + 1;
+  attach(canvas);
+};
+
+const set = (row: number, cols: number, val: 0 | 1) => universe.set(row, cols, val ? Cell.Alive : Cell.Dead);
+
+export {
+  create,
+  attach,
+  drawCells,
+  set,
+  render,
+  toggle,
+  stop,
+  isRunning,
+  setColor,
+  setColorBack,
+  setSize,
+  ALIVE_COLOR,
+  DEAD_COLOR,
+};

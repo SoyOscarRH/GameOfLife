@@ -1,4 +1,8 @@
+use rand::prelude::*;
 use wasm_bindgen::prelude::*;
+
+extern crate console_error_panic_hook;
+use std::panic;
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -34,8 +38,13 @@ impl Universe {
         row * self.width + col
     }
 
-    fn at(&self, row: usize, col: usize) -> Cell {
+    pub fn at(&self, row: usize, col: usize) -> Cell {
         self.cells[self.index(row, col)]
+    }
+
+    pub fn set(&mut self, row: usize, col: usize, value: Cell) {
+        let index = self.index(row, col);
+        self.cells[index] = value;
     }
 
     fn count_alive_around(&self, row: usize, col: usize) -> u8 {
@@ -51,8 +60,10 @@ impl Universe {
         return count - self.at(row, col) as u8;
     }
 
+
     pub fn toggle_cell(&mut self, row: usize, column: usize) {
-        self.cells[row * self.width + column].toggle();
+        let index = self.index(row, column);
+        self.cells[index].toggle();
     }
 
     pub fn cells(&self) -> *const Cell {
@@ -81,7 +92,29 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn create(width: usize, height: usize) -> Universe {
+    pub fn create(width: usize, height: usize, density: f64) -> Universe {
+        panic::set_hook(Box::new(console_error_panic_hook::hook));
+        let mut rng = rand::thread_rng();
+        let cells = (0..width * height)
+            .map(|_| {
+                let val: f64 = rng.gen();
+                if val < density {
+                    Cell::Alive
+                } else {
+                    Cell::Dead
+                }
+            })
+            .collect();
+
+        Universe {
+            width,
+            height,
+            cells,
+        }
+    }
+
+    pub fn default_start(width: usize, height: usize) -> Universe {
+        panic::set_hook(Box::new(console_error_panic_hook::hook));
         let cells = (0..width * height)
             .map(|i| {
                 if i % 2 == 0 || i % 7 == 0 {
