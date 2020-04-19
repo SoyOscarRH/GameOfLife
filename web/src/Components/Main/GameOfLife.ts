@@ -1,8 +1,14 @@
 import { memory } from "game-of-life-algorithm/game_of_life_algorithm_bg";
 import { Universe, Cell } from "game-of-life-algorithm";
 
-let DEAD_COLOR = "#00587a";
-let ALIVE_COLOR = "#7bb1b2";
+const get_random = <T>(x: Array<T>) => x[Math.floor(Math.random() * x.length)];
+let [DEAD_COLOR, ALIVE_COLOR] = get_random([
+  ["#00587a", "#7bb1b2"],
+  ["#511845", "#efa8e4"],
+  ["#3b6978", "#dee3e2"],
+  ["#721b65", "#ffd868"],
+  ["#5f6caf", "#8ac6d1"],
+]);
 
 let cell_size: number;
 let cell_space: number;
@@ -25,7 +31,7 @@ const setUpCanvas = () => {
 
   canvas.onclick = event => {
     if (isRunning()) stop();
-    
+
     const boundingRect = canvas.getBoundingClientRect();
 
     const scaleX = canvas.width / boundingRect.width;
@@ -128,4 +134,20 @@ const setSize = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 const set = (row: number, cols: number, val: 0 | 1) => universe.set(row, cols, val ? Cell.Alive : Cell.Dead);
 
-export { create, aliveNow, drawCells, set, render, toggle, stop, isRunning, setColor, setColorBack, setSize, setUpCanvas, getInfo, ALIVE_COLOR, DEAD_COLOR };
+export {
+  create,
+  aliveNow,
+  drawCells,
+  set,
+  render,
+  toggle,
+  stop,
+  isRunning,
+  setColor,
+  setColorBack,
+  setSize,
+  setUpCanvas,
+  getInfo,
+  ALIVE_COLOR,
+  DEAD_COLOR,
+};

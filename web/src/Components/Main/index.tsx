@@ -64,7 +64,7 @@ const MainScreen = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("keypress", event => event.keyCode == 32 && togglePause());
+    document.addEventListener("keypress", event => event.keyCode === 32 && togglePause());
   }, []);
 
   useEffect(() => {
