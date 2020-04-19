@@ -64,6 +64,10 @@ const MainScreen = () => {
   };
 
   useEffect(() => {
+    document.addEventListener("keypress", event => event.keyCode == 32 && togglePause());
+  }, []);
+
+  useEffect(() => {
     if (!measuring) return;
 
     let id: NodeJS.Timeout;
@@ -73,7 +77,7 @@ const MainScreen = () => {
       id = setInterval(() => Plotly.extendTraces("graph", { y: [[GameOfLife.aliveNow()]] }, [0]), 400);
     });
 
-    return () => clearInterval(id)
+    return () => clearInterval(id);
   }, [measuring]);
 
   return (
