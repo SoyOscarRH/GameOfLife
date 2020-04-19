@@ -5,7 +5,7 @@
 
 .displayContainer {
   overflow: scroll;
-  height: 80vh;
+  max-height: 80vh;
   border-radius: 1.5vmax;
 }
 

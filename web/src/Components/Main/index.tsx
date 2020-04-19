@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useToggle } from "../../Hooks/useToggle";
 
-import { getDefaultValues, getInit, save as saveFile } from "./utils";
+import { getInit, save as saveFile } from "./utils";
+import { getDefaultValues } from "./defaultValues";
 import * as GameOfLife from "./GameOfLife";
 
 import mainStyle from "./main.module.css";
@@ -53,7 +54,7 @@ const MainScreen = () => {
   };
   const [measuring, toggleMeasuring] = useToggle(false);
   useEffect(() => {
-    if (measuring) window.scrollBy({ top: 200, behavior: "smooth" });
+    if (measuring) window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
   }, [measuring]);
 
   return (
