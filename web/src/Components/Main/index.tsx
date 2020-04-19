@@ -94,7 +94,7 @@ const MainScreen = () => {
         <input id="cellBackColor" defaultValue={GameOfLife.DEAD_COLOR} onChange={e => GameOfLife.setColorBack(e.target.value)} />
 
         <label htmlFor="nCells">Size of cells: </label>
-        <input type="number" id="nCells" min="1" max="10" defaultValue={size} onChange={e => GameOfLife.setSize(e)} />
+        <input type="number" id="nCells" min="1" max="20" defaultValue={size} onChange={e => GameOfLife.setSize(e)} />
 
         <label htmlFor="width">Width: </label>
         <input type="number" defaultValue={width} id="width" step="20" min="20" max="1000" ref={widthInput} onChange={forceReset} />
