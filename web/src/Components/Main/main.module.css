@@ -1,36 +1,20 @@
+.displayContainer, .editing {
+  width: 85vw;
+  margin: 0 auto;
+}
+
 .displayContainer {
   overflow: scroll;
-  width: 85vw;
-  height: 82vh;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-}
-
-.icon {
-  height: 1.2rem;
-  margin: 0 0.6rem;
-  cursor: pointer;
-  transition: opacity 0.6s;
-  -webkit-transition: opacity 0.6s;
-}
-
-.header {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  user-select: none;
-  width: 85vw;
-  margin: 0 auto;
-  text-align: initial;
+  height: 80vh;
+  border-radius: 1.5vmax;
 }
 
 .editing {
-  width: 85vw;
-  margin: 0 auto;
   animation-timing-function: ease;
-  transition: max-height 600ms, padding 300ms;
-  -webkit-transition: max-height 600ms, padding 300ms;
+  transition: max-height 200ms, padding 200ms;
+  -webkit-transition: max-height 200ms, padding 200ms;
+  max-height: 0;
+  padding-bottom: 0rem;
 
   display: grid;
   justify-content: center;
@@ -38,39 +22,32 @@
   grid-column-gap: 0.6rem;
   grid-row-gap: 1rem;
   align-items: center;
-
-  font-size: 0.9rem;
-
-  max-height: 0;
-  overflow: hidden;
+ 
   text-align: initial;
-  padding-bottom: 0rem;
+  font-size: 0.9rem;
+  overflow: hidden;
 }
 
 .editing input,
 .editing button {
-  min-width: 5rem;
+  min-width: 4rem;
   font-size: 1.1rem;
   border: 0 solid;
   color: white;
-  font-family: "Source Code Pro", monospace;
-  padding: 0.6rem;
+  border-radius: 0.6vmax;
 }
 
 .editing input {
-  padding: 0.3rem 1rem;
-  border-radius: 0.4rem;
-  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.6rem;
+  background-color: rgba(255, 255, 255, 0.13);
   text-align: start;
 }
 
 .editing button {
-  padding: 0.4rem 0.1rem;
+  padding: 0.8rem 0;
   font-weight: bold;
-  border-radius: 0.4rem;
-  background-color: rgba(255, 255, 255, 0.6);
-  width: 100%;
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .editing button, .editing input[type=file] {
@@ -78,8 +55,8 @@
 }
 
 .editing input[type=file] {
-  font-size: 0.7rem;
-  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
 }
 
 @media only screen and (max-width: 600px) {
@@ -90,12 +67,13 @@
     grid: auto-flow dense / 1fr 1fr;
   }
 
-  .editing input {
-    margin-bottom: 0.5rem;
+  .visual {
+    max-height: 28rem !important;
   }
 
-  .visual {
-    max-height: 26rem !important;
+  .editing {
+    transition: max-height 400ms, padding 400ms;
+    -webkit-transition: max-height 400ms, padding 400ms;
   }
 }
 

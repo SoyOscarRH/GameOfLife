@@ -1,8 +1,8 @@
 import { memory } from "game-of-life-algorithm/game_of_life_algorithm_bg";
 import { Universe, Cell } from "game-of-life-algorithm";
 
-let DEAD_COLOR = "#393e4a";
-let ALIVE_COLOR = "#989fb0";
+let DEAD_COLOR = "#00587a";
+let ALIVE_COLOR = "#7bb1b2";
 
 let cell_size: number;
 let cell_space: number;
@@ -111,7 +111,6 @@ const stop = () => {
 
 const render = () => {
   universe.tick();
-  console.log(universe.alive_now())
   drawCells();
   id = requestAnimationFrame(render);
 };

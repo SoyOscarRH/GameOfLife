@@ -1,22 +1,17 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-
 import { useToggle } from "../../Hooks/useToggle";
 
+import { getDefaultValues, getInit, save as saveFile } from "./utils";
 import * as GameOfLife from "./GameOfLife";
 
 import mainStyle from "./main.module.css";
+import headerStyle from "./header.module.css";
+import { edit, save, pause, report } from "./icons";
 
-import { getDefaultValues, getInit, save as saveFile } from "./utils";
-
-import edit from "../../assets/edit.png";
-import pause from "../../assets/pause.png";
-import save from "../../assets/save.png";
-
+const saveDoc = () => saveFile("data.txt", GameOfLife.getInfo());
 const { width, height, size, density } = getDefaultValues();
-
-const Main = () => {
+const MainScreen = () => {
   const display = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     GameOfLife.create({ width, height, cell_size: size, canvas: display.current! });
     GameOfLife.render();
@@ -58,23 +53,17 @@ const Main = () => {
   };
   const [measuring, toggleMeasuring] = useToggle(false);
   useEffect(() => {
-    
+    if (measuring) window.scrollBy({ top: 200, behavior: "smooth" });
   }, [measuring]);
-
-  const clickMeasure = () => {
-    toggleMeasuring();
-    let node = document.getElementById("measuring");
-    setTimeout(() => node?.scrollIntoView({ behavior: "smooth", block: "end" }), 300);
-  };
 
   return (
     <>
-      <header className={mainStyle.header}>
+      <header className={headerStyle.header}>
         <h2>Game of Life</h2>
-        <img alt="save" className={mainStyle.icon} src={save} onClick={() => saveFile("data.txt", GameOfLife.getInfo())} />
-        <img alt="pause" className={mainStyle.icon} src={pause} onClick={togglePause} style={{ opacity: isPaused ? 0.5 : 1 }} />
-        <img alt="edit" className={mainStyle.icon} src={edit} onClick={toggleEditing} style={{ opacity: isEditing ? 1 : 0.5 }} />
-        <img alt="edit" className={mainStyle.icon} src={edit} onClick={clickMeasure} style={{ opacity: measuring ? 1 : 0.5 }} />
+        <img alt="save" src={save} onClick={saveDoc} />
+        <img alt="pause" src={pause} onClick={togglePause} style={{ opacity: isPaused ? 0.7 : 1 }} />
+        <img alt="edit" src={edit} onClick={toggleEditing} style={{ opacity: isEditing ? 1 : 0.7 }} />
+        <img alt="report" src={report} onClick={toggleMeasuring} style={{ opacity: measuring ? 1 : 0.7 }} />
       </header>
 
       <section className={`${mainStyle.editing} ${isEditing ? mainStyle.visual : ""}`}>
@@ -124,4 +113,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default MainScreen;
