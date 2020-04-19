@@ -118,6 +118,8 @@ const render = () => {
 const setColor = (color: string) => (ALIVE_COLOR = color);
 const setColorBack = (color: string) => (DEAD_COLOR = color);
 
+const aliveNow = () => universe.alive_now();
+
 const setSize = (event: React.ChangeEvent<HTMLInputElement>) => {
   cell_size = parseInt(event.target.value);
   cell_space = cell_size + 1;
@@ -126,4 +128,4 @@ const setSize = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 const set = (row: number, cols: number, val: 0 | 1) => universe.set(row, cols, val ? Cell.Alive : Cell.Dead);
 
-export { create, drawCells, set, render, toggle, stop, isRunning, setColor, setColorBack, setSize, setUpCanvas, getInfo, ALIVE_COLOR, DEAD_COLOR };
+export { create, aliveNow, drawCells, set, render, toggle, stop, isRunning, setColor, setColorBack, setSize, setUpCanvas, getInfo, ALIVE_COLOR, DEAD_COLOR };

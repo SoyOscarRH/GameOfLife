@@ -49,6 +49,7 @@ const MainScreen = () => {
       alert("Error: wrong inputs");
     }
   };
+
   const [measuring, toggleMeasuring] = useToggle(false);
   useEffect(() => {
     if (measuring) window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
@@ -58,9 +59,22 @@ const MainScreen = () => {
   const [isEditing, toggleEditing] = useToggle(false);
 
   const togglePause = () => {
-    GameOfLife.toggle()
+    GameOfLife.toggle();
     setPause(e => !e);
-  }
+  };
+
+  useEffect(() => {
+    if (!measuring) return;
+
+    let id: NodeJS.Timeout;
+    // @ts-ignore
+    import("plotly.js-basic-dist").then(Plotly => {
+      Plotly.newPlot("graph", [{ y: [], mode: "histogram", line: { color: "#00587a" } }], { plot_bgcolor: "7bb1b2", paper_bgcolor: "#a9cccd" });
+      id = setInterval(() => Plotly.extendTraces("graph", { y: [[GameOfLife.aliveNow()]] }, [0]), 400);
+    });
+
+    return () => clearInterval(id)
+  }, [measuring]);
 
   return (
     <>
@@ -109,11 +123,7 @@ const MainScreen = () => {
         <hr style={{ width: "80%", borderWidth: "0.1rem" }} />
 
         <h2>Analysis</h2>
-        <div>
-          <p>Average: </p>
-          <p>Variance: </p>
-        </div>
-        <div id="graph" />
+        <div className={mainStyle.graph} id="graph" />
       </section>
     </>
   );

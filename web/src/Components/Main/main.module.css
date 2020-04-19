@@ -1,6 +1,12 @@
-.displayContainer, .editing {
+.displayContainer, .editing, .graph {
   width: 85vw;
   margin: 0 auto;
+}
+
+.graph {
+  overflow: scroll;
+  padding-bottom: 2rem;
+  border-radius: 1.5vmax;
 }
 
 .displayContainer {
@@ -22,7 +28,7 @@
   grid-column-gap: 0.6rem;
   grid-row-gap: 1rem;
   align-items: center;
- 
+
   text-align: initial;
   font-size: 0.9rem;
   overflow: hidden;
@@ -50,11 +56,12 @@
   background-color: rgba(255, 255, 255, 0.6);
 }
 
-.editing button, .editing input[type=file] {
+.editing button,
+.editing input[type="file"] {
   grid-column: span 2;
 }
 
-.editing input[type=file] {
+.editing input[type="file"] {
   font-size: 0.8rem;
   font-weight: bold;
 }

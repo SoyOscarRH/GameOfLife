@@ -8,6 +8,7 @@
     "@types/react-dom": "^16.9.0",
     "game-of-life-algorithm": "file:../algorithm/pkg",
     "gh-pages": "^2.2.0",
+    "plotly.js-basic-dist": "^1.53.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
