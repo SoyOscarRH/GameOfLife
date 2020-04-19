@@ -16,7 +16,6 @@ let universe: Universe;
 let context: CanvasRenderingContext2D;
 let canvas: HTMLCanvasElement;
 
-
 const setUpCanvas = () => {
   canvas.height = cell_space * height + 1;
   canvas.width = cell_space * width + 1;
@@ -24,8 +23,9 @@ const setUpCanvas = () => {
   context = canvas.getContext("2d") as CanvasRenderingContext2D;
   drawCells();
 
-  canvas.addEventListener("click", event => {
-    if (isRunning()) return;
+  canvas.onclick = event => {
+    if (isRunning()) stop();
+    
     const boundingRect = canvas.getBoundingClientRect();
 
     const scaleX = canvas.width / boundingRect.width;
@@ -39,7 +39,7 @@ const setUpCanvas = () => {
 
     universe.toggle_cell(row, col);
     paintPoint(context, row, col);
-  });
+  };
 };
 
 type rules = [number, number, number, number];

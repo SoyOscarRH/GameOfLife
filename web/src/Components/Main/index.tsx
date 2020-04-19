@@ -18,9 +18,6 @@ const MainScreen = () => {
     GameOfLife.render();
   }, []);
 
-  const [isPaused, togglePause] = useToggle(false, GameOfLife.toggle);
-  const [isEditing, toggleEditing] = useToggle(false);
-
   const widthInput = useRef<HTMLInputElement>(null);
   const heightInput = useRef<HTMLInputElement>(null);
   const densityInput = useRef<HTMLInputElement>(null);
@@ -56,6 +53,14 @@ const MainScreen = () => {
   useEffect(() => {
     if (measuring) window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
   }, [measuring]);
+
+  const [isPaused, setPause] = useState(false);
+  const [isEditing, toggleEditing] = useToggle(false);
+
+  const togglePause = () => {
+    GameOfLife.toggle()
+    setPause(e => !e);
+  }
 
   return (
     <>
@@ -96,7 +101,7 @@ const MainScreen = () => {
         <button onClick={startSimulation}>Simulate automata</button>
       </section>
 
-      <section className={mainStyle.displayContainer}>
+      <section className={mainStyle.displayContainer} onClick={() => setPause(true)}>
         <canvas ref={display} />
       </section>
 
