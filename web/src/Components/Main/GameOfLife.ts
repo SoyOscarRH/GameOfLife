@@ -16,6 +16,7 @@ let width: number;
 let height: number;
 
 let cells = new Uint8Array();
+let changes = new Uint32Array();
 let id = 0;
 
 let universe: Universe;
@@ -70,10 +71,29 @@ const paintPoint = (context: CanvasRenderingContext2D, row: number, col: number)
 
 const isRunning = () => id !== 0;
 
+const drawDifferentCells = () => {
+  const num_changes = universe.how_many_changes();
+  changes = new Uint32Array(memory.buffer, universe.changes(), universe.how_many_changes());
+  cells = new Uint8Array(memory.buffer, universe.cells(), width * height);
+
+  context.beginPath();
+
+  for (let i = 0; i < num_changes; i += 2) {
+    const row = changes[i];
+    const col = changes[i + 1];
+    const index = width * row + col;
+
+    context.fillStyle = cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+    const x = col * cell_space + 1;
+    const y = row * cell_space + 1;
+    context.fillRect(x, y, cell_size, cell_size);
+  }
+
+  context.stroke();
+};
+
 const drawCells = () => {
-  const cellsPointer = universe.cells();
-  const size = width * height;
-  cells = new Uint8Array(memory.buffer, cellsPointer, size);
+  cells = new Uint8Array(memory.buffer, universe.cells(), width * height);
 
   context.beginPath();
 
@@ -117,8 +137,8 @@ const stop = () => {
 
 const render = () => {
   universe.tick();
-  drawCells();
-  id = requestAnimationFrame(render);
+  drawDifferentCells();
+  setTimeout(() => (id = requestAnimationFrame(render)), 0);
 };
 
 const setColor = (color: string) => (ALIVE_COLOR = color);
