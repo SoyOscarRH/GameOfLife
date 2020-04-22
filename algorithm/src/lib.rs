@@ -106,6 +106,13 @@ impl Universe {
         self.cells = next;
     }
 
+    pub fn cool_start(&mut self) {
+        self.cells = (0..self.width * self.height)
+            .map(|i| if i % 2 == 0 || i % 7 == 0 { Cell::Alive } else { Cell::Dead })
+            .collect();
+
+        self.alive_now = self.cells.iter().filter(|&c| *c == Cell::Alive).count();
+    }
     pub fn create(width: u32, height: u32, density: f64, s_min: u8, s_max: u8, b_min: u8, b_max: u8) -> Universe {
         let mut rng = rand::thread_rng();
         let cells: Vec<Cell> = (0..width * height)
@@ -124,26 +131,6 @@ impl Universe {
             birth_max: b_max,
             alive_now,
             changes: vec![],
-        }
-    }
-
-    pub fn default_start(width: u32, height: u32, survive_min: u8, survive_max: u8, birth_min: u8, birth_max: u8) -> Universe {
-        let cells: Vec<Cell> = (0..width * height)
-            .map(|i| if i % 2 == 0 || i % 7 == 0 { Cell::Alive } else { Cell::Dead })
-            .collect();
-
-        let alive_now = cells.iter().filter(|&c| *c == Cell::Alive).count();
-
-        Universe {
-            width,
-            height,
-            cells,
-            changes: vec![],
-            survive_min,
-            survive_max,
-            birth_min,
-            birth_max,
-            alive_now,
         }
     }
 }

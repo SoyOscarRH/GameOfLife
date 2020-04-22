@@ -116,7 +116,7 @@ const MainScreen = () => {
         <input defaultValue={"3, 3"} id="birth" ref={birth} onChange={forceReset} />
 
         <input type="file" id="file" onChange={e => getInit(e, widthInput, heightInput, densityInput)} />
-        <button onClick={startSimulation}>Simulate automata</button>
+        <button onClick={startSimulation}>{reset ? "Simulate new automata" : "Continue"}</button>
       </section>
 
       <section className={mainStyle.displayContainer} onClick={() => setPause(true)}>

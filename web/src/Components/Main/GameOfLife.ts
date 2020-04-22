@@ -16,7 +16,6 @@ let width: number;
 let height: number;
 
 let cells = new Uint8Array();
-let changes = new Uint32Array();
 let id = 0;
 
 let universe: Universe;
@@ -28,6 +27,7 @@ const setUpCanvas = () => {
   canvas.width = cell_space * width + 1;
 
   context = canvas.getContext("2d") as CanvasRenderingContext2D;
+
   drawCells();
 
   canvas.onclick = event => {
@@ -58,7 +58,9 @@ const create = (data: { width: number; height: number; density?: number; cell_si
   width = data.width;
   height = data.height;
   let rules = data.rules ?? [2, 3, 3, 3];
-  universe = data.density != null ? Universe.create(width, height, data.density, ...rules) : Universe.default_start(width, height, ...rules);
+
+  universe = Universe.create(width, height, 0.1, ...rules);
+  if (data.density == null) universe.cool_start();
   setUpCanvas();
 };
 
@@ -73,7 +75,7 @@ const isRunning = () => id !== 0;
 
 const drawDifferentCells = () => {
   const num_changes = universe.how_many_changes();
-  changes = new Uint32Array(memory.buffer, universe.changes(), universe.how_many_changes());
+  let changes = new Uint32Array(memory.buffer, universe.changes(), universe.how_many_changes());
   cells = new Uint8Array(memory.buffer, universe.cells(), width * height);
 
   context.beginPath();
@@ -138,7 +140,7 @@ const stop = () => {
 const render = () => {
   universe.tick();
   drawDifferentCells();
-  setTimeout(() => (id = requestAnimationFrame(render)), 0);
+  id = requestAnimationFrame(render);
 };
 
 const setColor = (color: string) => (ALIVE_COLOR = color);
